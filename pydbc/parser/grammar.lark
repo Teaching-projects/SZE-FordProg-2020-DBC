@@ -25,7 +25,7 @@ dontcare: /..*/
 
 nodes : "BU_:" node_name*
 
-node_name : c_identifier
+?node_name : c_identifier
 
 // Value Table Definitions
 
@@ -42,40 +42,43 @@ messages : message*
 
 message : "BO_" message_id message_name ":" message_size transmitter signal*
 
-message_id : unsigned_integer
+?message_id : unsigned_integer
 
-message_name : c_identifier
+?message_name : c_identifier
 
-message_size : unsigned_integer
+?message_size : unsigned_integer
 
-transmitter : node_name | "Vector__XXX" // Vector__XXX means no sender
+!?transmitter : node_name | "Vector__XXX" // Vector__XXX means no sender
 
 // Signal Definitions
 
-signal : "SG_" signal_name multiplexer_indicator? ":" start_bit "|" signal_size "@" byte_order value_type "(" factor "," offset ")" "[" minimum "|" maximum "]" /"/ unit? /"/ receiver ("," receiver)*
+signal : "SG_" signal_name multiplexer_indicator ":" start_bit "|" signal_size "@" byte_order value_type "(" factor "," offset ")" "[" minimum "|" maximum "]" unit receiver ("," receiver)*
 
-signal_name : c_identifier
+?signal_name : c_identifier
 
-multiplexer_indicator : "M" | HACK_M multiplexer_switch_value
+multiplexer_indicator : maybe_multiplexer_indicator?
+
+// Needed so that multiplexer_indicator will always be in signal rule
+maybe_multiplexer_indicator: "M" | HACK_M multiplexer_switch_value
 
 HACK_M.2 : "m"
 
 multiplexer_switch_value : unsigned_integer
 
-start_bit : unsigned_integer
+?start_bit : unsigned_integer
 
-signal_size : unsigned_integer
+?signal_size : unsigned_integer
 
-byte_order : "0" | "1" //  0=little endian, 1=big endian
+!?byte_order : "0" | "1" //  0=little endian, 1=big endian
 
-value_type : "+" | "-"  //  +=unsigned, -=signed
+!?value_type : "+" | "-"  //  +=unsigned, -=signed
 
-factor : double
-offset : double
-minimum : double
-maximum : double
+?factor : double
+?offset : double
+?minimum : double
+?maximum : double
 
-unit : char_string
+?unit : char_string_ap
 receiver : node_name | "Vector__XXX"
 
 signal_extended_value_type_list : "SIG_VALTYPE_" message_id signal_name signal_extended_value_type ";"
@@ -131,8 +134,8 @@ comment : "CM_" (char_string_ap | "BU_" node_name char_string_ap | "BO_" message
 attribute_definitions : attribute_definition*
 attribute_definition : "BA_DEF_" (object_type)? attribute_name attribute_value_type ";"
 object_type : "BU_" | "BO_" | "SG_" | "EV_"
-attribute_name : /"/ c_identifier /"/
-attribute_value_type : "INT" signed_integer signed_integer
+attribute_name : c_identifier_ap
+!attribute_value_type : "INT" signed_integer signed_integer
  | "HEX" signed_integer signed_integer
  | "FLOAT" double double
  | "STRING"
@@ -146,15 +149,16 @@ attribute_value_for_object : "BA_" attribute_name (attribute_value  | "BU_" node
 
 
 
-string : WORD
-c_identifier : CNAME
-char_string : CHAR_STRING_0
+?string : WORD
+?c_identifier : CNAME
+?c_identifier_ap : /"/ CNAME /"/
+?char_string : CHAR_STRING_0
 CHAR_STRING_0.0: /[\w ,;.:]+/
 char_string_ap : /"/ CHAR_STRING_0? /"/
 
-signed_integer : SIGNED_INT
-unsigned_integer : INT
-double : SIGNED_NUMBER
+?signed_integer : SIGNED_INT
+?unsigned_integer : INT
+?double : SIGNED_NUMBER
 
 %import common.ESCAPED_STRING
 %import common.WORD

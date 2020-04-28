@@ -10,10 +10,9 @@ logging.basicConfig(level=logging.DEBUG)
 def main():
     print('creating parser...')
     kwargs={
-        #"start" : "dbc_file",
         "lexer" : 'contextual',
         "parser" : 'lalr',
-        #"transformer" : DBC_Transformer,
+        "transformer" : DBC_Transformer,
         "debug" : True
     }
     parser = Lark(open(r'grammar.lark'), **kwargs)
