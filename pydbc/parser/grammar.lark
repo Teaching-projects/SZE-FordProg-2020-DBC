@@ -35,7 +35,7 @@ value_table : "VAL_TABLE_" value_table_name value_description* ";"
 
 value_table_name : c_identifier
 
-value_description : double char_string
+value_description : double char_string_ap
 
 // Message Definitions
 messages : message*
@@ -52,7 +52,7 @@ transmitter : node_name | "Vector__XXX" // Vector__XXX means no sender
 
 // Signal Definitions
 
-signal : "SG_" signal_name multiplexer_indicator? ":" start_bit "|" signal_size "@" byte_order value_type "(" factor "," offset ")" "[" minimum "|" maximum "]" unit? receiver ("," receiver)*
+signal : "SG_" signal_name multiplexer_indicator? ":" start_bit "|" signal_size "@" byte_order value_type "(" factor "," offset ")" "[" minimum "|" maximum "]" /"/ unit? /"/ receiver ("," receiver)*
 
 signal_name : c_identifier
 
@@ -117,14 +117,14 @@ default_value : double
 signal_type_refs : signal_type_ref*
 signal_type_ref : "SGTYPE_" message_id signal_name ":" signal_type_name ";"
 
-signal_groups : "SIG_GROUP_" message_id signal_group_name repetitions ":" signal_name* ";"
+signal_groups : signal_group*
+signal_group : "SIG_GROUP_" message_id signal_group_name repetitions ":" signal_name* ";"
 signal_group_name : c_identifier
 repetitions : unsigned_integer
 
 // Comment Definitions
 comments : comment*
-comment : "CM_" (char_string | "BU_" node_name char_string | "BO_" message_id char_string | "SG_" message_id signal_name char_string | "EV_" env_var_name char_string) ";"
-//CM.2: "CM_"
+comment : "CM_" (char_string_ap | "BU_" node_name char_string_ap | "BO_" message_id char_string_ap | "SG_" message_id signal_name char_string_ap | "EV_" env_var_name char_string_ap) ";"
 
 // Attribute Definitions
 
@@ -139,7 +139,7 @@ attribute_value_type : "INT" signed_integer signed_integer
  | "ENUM" [char_string ("," char_string)*]
 attribute_defaults : attribute_default*
 attribute_default : "BA_DEF_DEF_" attribute_name attribute_value ";"
-attribute_value : unsigned_integer | signed_integer | double | char_string
+attribute_value : unsigned_integer | signed_integer | double | char_string_ap
 
 attribute_values : attribute_value_for_object*
 attribute_value_for_object : "BA_" attribute_name (attribute_value  | "BU_" node_name attribute_value  | "BO_" message_id attribute_value  | "SG_" message_id signal_name attribute_value  | "EV_" env_var_name attribute_value) ";"
@@ -149,7 +149,9 @@ attribute_value_for_object : "BA_" attribute_name (attribute_value  | "BU_" node
 string : WORD
 c_identifier : CNAME
 char_string : CHAR_STRING_0
-CHAR_STRING_0: /"[\w ,;.:]*"/
+CHAR_STRING_0.0: /[\w ,;.:]+/
+char_string_ap : /"/ CHAR_STRING_0? /"/
+
 signed_integer : SIGNED_INT
 unsigned_integer : INT
 double : SIGNED_NUMBER
