@@ -6,9 +6,11 @@ grammar="""
 %import common.WS
 %ignore WS
 
-start :  "BO_" signal*
-signal : "SG_" signal_name multiplexer_indicator ":" value "|" value c_identifier (","c_identifier)*
+start : signal* //group
+signal : "SG_" signal_name multiplexer_indicator ";" 
 ?signal_name : c_identifier
+
+//group: "GR_" c_identifier ":" signal_name*
 
 !multiplexer_indicator : | "M" | "m" switch_value
 
@@ -21,6 +23,7 @@ value: INT
 """
 
 parser = Lark(grammar, parser='lalr', lexer='contextual')
-print(parser.parse('BO_ SG_ motortemp m8 : 1|2 D SG_ motortemp m8 : 1|2 D,d').pretty())
-print(parser.parse('BO_ SG_ motortemp M :1|2 D').pretty())
-print(parser.parse('BO_ SG_ motortemp : 1|2 D').pretty())
+print(parser.parse('SG_ motortemp m8 ; SG_ motorrev m8 ;').pretty())
+# print(parser.parse('SG_ motortemp m8 ; SG_ motorrev m8 ; GR_ gr1 sa sb').pretty())
+# print(parser.parse('SG_ motortemp M ; GR_ gr1 sa sb').pretty())
+# print(parser.parse('SG_ motortemp ; GR_ gr1 sa sb').pretty())
