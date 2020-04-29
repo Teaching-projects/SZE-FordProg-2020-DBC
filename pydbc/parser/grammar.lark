@@ -4,13 +4,13 @@ dbc_file : version new_symbols bit_timing nodes value_tables messages message_tr
 
 // Version and New Symbol Specification
 
-version : ["VERSION" /"/ candb_version_string* /"/ ]
+version : ["VERSION" "\"" candb_version_string* "\""]
 
 candb_version_string : c_identifier
 
 //?new_symbols : [ "_NS" ":" ["CM_"] ["BA_DEF_"] ["BA_"] ["VAL_"] ["CAT_DEF_"] ["CAT_"] ["FILTER"] ["BA_DEF_DEF_"] ["EV_DATA_"] ["ENVVAR_DATA_"] ["SGTYPE_"] ["SGTYPE_VAL_"] ["BA_DEF_SGTYPE_"] ["BA_SGTYPE_"] ["SIG_TYPE_REF_"] ["VAL_TABLE_"] ["SIG_GROUP_"] ["SIG_VALTYPE_"] ["SIGTYPE_VALTYPE_"] ["BO_TX_BU_"] ["BA_DEF_REL_"] ["BA_REL_"] ["BA_DEF_DEF_REL_"] ["BU_SG_REL_"] ["BU_EV_REL_"] ["BU_BO_REL_"] ]
 ?new_symbols : [ "NS_" ":" dontcare*]
-dontcare: /..*/
+?dontcare: /..*/
 //  Bit Timing Definition
 
 ?bit_timing : "BS_:" [ baudrate ":" btr1 "," btr2 ]
@@ -56,11 +56,11 @@ signal : "SG_" signal_name multiplexer_indicator ":" start_bit "|" signal_size "
 
 ?signal_name : c_identifier
 
-!multiplexer_indicator : | "M" | "m" multiplexer_switch_value
+!multiplexer_indicator : | "M" | SWITCHED
 
-LC_M : "m"
+SWITCHED.2: /m\d/
 
-multiplexer_switch_value : unsigned_integer
+switch_value : unsigned_integer
 
 ?start_bit : unsigned_integer
 
@@ -120,7 +120,7 @@ signal_type_ref : "SGTYPE_" message_id signal_name ":" signal_type_name ";"
 signal_groups : signal_group*
 signal_group : "SIG_GROUP_" message_id signal_group_name repetitions ":" signal_name* ";"
 signal_group_name : c_identifier
-repetitions : unsigned_integer
+repetitions : double
 
 // Comment Definitions
 comments : comment*
@@ -148,10 +148,10 @@ attribute_value_for_object : "BA_" attribute_name (attribute_value  | "BU_" node
 
 ?string : WORD
 ?c_identifier : CNAME
-?c_identifier_ap : /"/ CNAME /"/
+?c_identifier_ap : "\"" CNAME "\""
 ?char_string : CHAR_STRING_0
 CHAR_STRING_0.0: /[\w ,;.:]+/
-char_string_ap : /"/ CHAR_STRING_0? /"/
+?char_string_ap : "\"" char_string? "\""
 
 ?signed_integer : SIGNED_INT
 ?unsigned_integer : INT
