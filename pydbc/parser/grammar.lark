@@ -56,12 +56,9 @@ signal : "SG_" signal_name multiplexer_indicator ":" start_bit "|" signal_size "
 
 ?signal_name : c_identifier
 
-multiplexer_indicator : maybe_multiplexer_indicator?
+!multiplexer_indicator : | "M" | "m" multiplexer_switch_value
 
-// Needed so that multiplexer_indicator will always be in signal rule
-maybe_multiplexer_indicator: "M" | HACK_M multiplexer_switch_value
-
-HACK_M.2 : "m"
+LC_M : "m"
 
 multiplexer_switch_value : unsigned_integer
 
