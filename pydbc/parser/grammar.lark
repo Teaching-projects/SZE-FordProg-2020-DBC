@@ -1,4 +1,4 @@
-start: dbc_file
+?start: dbc_file
 
 dbc_file : version new_symbols bit_timing nodes value_tables messages message_transmitters environment_variables environment_variables_data comments attribute_definitions attribute_defaults attribute_values value_descriptions signal_groups
 
@@ -124,7 +124,7 @@ repetitions : double
 
 // Comment Definitions
 comments : comment*
-comment : "CM_" (char_string_ap | "BU_" node_name char_string_ap | "BO_" message_id char_string_ap | "SG_" message_id signal_name char_string_ap | "EV_" env_var_name char_string_ap) ";"
+!comment : "CM_" (char_string_ap | "BU_" node_name char_string_ap | "BO_" message_id char_string_ap | "SG_" message_id signal_name char_string_ap | "EV_" env_var_name char_string_ap) ";"
 
 // Attribute Definitions
 
