@@ -6,19 +6,12 @@ grammar="""
 %import common.WS
 %ignore WS
 
-start : signal* //group
+start : signal* group
 signal : "SG_" signal_name multiplexer_indicator ";" 
-?signal_name : c_identifier
+signal_name : CNAME
+!multiplexer_indicator : | "M" | "m" INT
 
-//group: "GR_" c_identifier ":" signal_name*
-
-!multiplexer_indicator : | "M" | "m" switch_value
-
-LC_M : "m"
-
-switch_value: value
-c_identifier :CNAME
-value: INT
+group: "GR_" CNAME ":" signal_name*
 
 """
 
