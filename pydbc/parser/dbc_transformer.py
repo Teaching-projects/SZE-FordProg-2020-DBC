@@ -1,32 +1,36 @@
 from lark import Transformer, Tree
 
-from pydbc.CAN_data import Node, Message, Signal, Comment
+from pydbc.CAN_data import Node, Message, Signal, Comment, CANDatabase
+
 
 class DBC_Transformer(Transformer):
 
     def dbc_file(self):
-        version = self[0]
-        new_symbols = self[1]
-        bit_timing = self[2]
-        nodes = self[3]
-        value_tables = self[4]
-        messages = self[5]
-        message_transmitters = self[6]
-        environment_variables = self[7]
-        environment_variables_data = self[8]
-        comments = self[9]
-        attribute_definitions = self[10]
-        attribute_defaults = self[11]
-        attribute_values = self[12]
-        value_descriptions = self[13]
-        signal_groups = self[14]
-        return Tree('dbc_file', self)
+        database = CANDatabase(
+        version = self[0],
+        new_symbols = self[1],
+        bit_timing = self[2],
+        nodes = self[3],
+        value_tables = self[4],
+        messages = self[5],
+        message_transmitters = self[6],
+        environment_variables = self[7],
+        environment_variables_data = self[8],
+        comments = self[9],
+        attribute_definitions = self[10],
+        attribute_defaults = self[11],
+        attribute_values = self[12],
+        value_descriptions = self[13],
+        signal_groups = self[14],
+        )
+        database.process()
+        return Tree('databse', self)
 
     def new_symbols(self):
         return tuple(n.value for n in iter(self))
 
     def nodes(self):
-        return [Node(name=n.value) for n in iter(self)]
+        return {n.value : Node(name=n.value) for n in iter(self)}
 
     def messages(self):
         return self
@@ -101,6 +105,12 @@ class DBC_Transformer(Transformer):
             type=type_,
             **data
         )
+
+    def attribute_definitions(self):
+        return tuple(self)
+
+    def attribute_values(self):
+        pass
 
     def char_string_ap(self):
         if self:

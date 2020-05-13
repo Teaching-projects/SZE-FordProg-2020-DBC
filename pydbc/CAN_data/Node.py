@@ -1,7 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass()
 class Node:
     name: str = None
-    messages: list = None
+    messages: list = field(default_factory=list)
