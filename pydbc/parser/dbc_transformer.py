@@ -24,7 +24,7 @@ class DBC_Transformer(Transformer):
         signal_groups = self[14],
         )
         database.process()
-        return Tree('databse', self)
+        return database
 
     def new_symbols(self):
         return tuple(n.value for n in iter(self))
