@@ -33,13 +33,14 @@ The signals are collected into `Message`s with these attributes:
     message_size:int = None
     transmitter: list = None
     signals: list = None
-    ```
+```
     
 The `Node` is collecting the messages which the given Node can transmit:
 ```python
     name: str = None
     messages: list = field(default_factory=list)
-    ```
+```
+
 An example usage can be to query what are the signal names a given node sends:
 ```python
 >>> for message in database.nodes["IO"].messages:
